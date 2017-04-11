@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import whatsapp.cursoandroid.com.whatsapp.R;
+import whatsapp.cursoandroid.com.whatsapp.adapter.MensagemAdapter;
 import whatsapp.cursoandroid.com.whatsapp.config.ConfiguracaoFirebase;
 import whatsapp.cursoandroid.com.whatsapp.helper.Base64Custom;
 import whatsapp.cursoandroid.com.whatsapp.helper.Preferencias;
@@ -30,8 +31,8 @@ public class ConversaActivity extends AppCompatActivity {
     private ImageButton btMensagem;
     private DatabaseReference firebase;
     private ListView listView;
-    private ArrayList<String> mensagens;
-    private ArrayAdapter adapter;
+    private ArrayList<Mensagem> mensagens;
+    private ArrayAdapter<Mensagem> adapter;
     private ValueEventListener valueEventListenerMensagem;
 
 
@@ -71,7 +72,7 @@ public class ConversaActivity extends AppCompatActivity {
 
         //configurar lista view e adapter
         mensagens = new ArrayList<>();
-        adapter = new ArrayAdapter(ConversaActivity.this, android.R.layout.simple_list_item_1, mensagens);
+        adapter = new MensagemAdapter(ConversaActivity.this, mensagens);
         listView.setAdapter(adapter);
 
         //recuperar mensagens firebase
@@ -83,7 +84,7 @@ public class ConversaActivity extends AppCompatActivity {
                 mensagens.clear();
                 for (DataSnapshot dados : dataSnapshot.getChildren()) {
                     Mensagem mensagem = dados.getValue(Mensagem.class);
-                    mensagens.add(mensagem.getMensagem());
+                    mensagens.add(mensagem);
                 }
                 adapter.notifyDataSetChanged();
             }
