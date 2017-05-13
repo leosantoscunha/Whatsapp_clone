@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +13,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
@@ -37,6 +33,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
 
     private FirebaseAuth autenticacao;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +49,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 usuario = new Usuario();
-                usuario.setNome( nome.getText().toString() );
+                usuario.setNome(nome.getText().toString());
                 usuario.setEmail(email.getText().toString());
                 usuario.setSenha(senha.getText().toString());
                 cadastrarUsuario();
@@ -62,7 +59,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
 
     }
 
-    private void cadastrarUsuario(){
+    private void cadastrarUsuario() {
 
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         autenticacao.createUserWithEmailAndPassword(
@@ -72,23 +69,23 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
-                if( task.isSuccessful() ){
+                if (task.isSuccessful()) {
 
-                    Toast.makeText(CadastroUsuarioActivity.this, "Sucesso ao cadastrar usuário", Toast.LENGTH_LONG ).show();
+                    Toast.makeText(CadastroUsuarioActivity.this, "Sucesso ao cadastrar usuário", Toast.LENGTH_LONG).show();
 
-                    String identificadorUsuario = Base64Custom.codificarBase64( usuario.getEmail() );
-                    usuario.setId( identificadorUsuario );
+                    String identificadorUsuario = Base64Custom.codificarBase64(usuario.getEmail());
+                    usuario.setId(identificadorUsuario);
                     usuario.salvar();
 
                     Preferencias preferencias = new Preferencias(CadastroUsuarioActivity.this);
-                    preferencias.salvarDados( identificadorUsuario );
+                    preferencias.salvarDados(identificadorUsuario, usuario.getNome());
 
                     abrirLoginUsuario();
 
-                }else{
+                } else {
 
                     String erro = "";
-                    try{
+                    try {
                         throw task.getException();
                     } catch (FirebaseAuthWeakPasswordException e) {
                         erro = "Escolha uma senha que contenha, letras e números.";
@@ -100,7 +97,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    Toast.makeText(CadastroUsuarioActivity.this, "Erro ao cadastrar usuário: " + erro, Toast.LENGTH_LONG ).show();
+                    Toast.makeText(CadastroUsuarioActivity.this, "Erro ao cadastrar usuário: " + erro, Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -108,7 +105,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
 
     }
 
-    public void abrirLoginUsuario(){
+    public void abrirLoginUsuario() {
         Intent intent = new Intent(CadastroUsuarioActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
